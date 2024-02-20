@@ -7,7 +7,7 @@ import (
 	"io"
 	"os"
 	"strings"
-	"github.com/jstermask/dynatrace-client/model"
+	"github.com/jstermask/go-dynatrace-client/model"
 )
 
 const FolderPattern string = "dynatrace_extension"

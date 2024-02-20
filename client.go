@@ -12,8 +12,8 @@ import (
 	"path"
 	"time"
 
-	"github.com/jstermask/dynatrace-client/extension"
-	"github.com/jstermask/dynatrace-client/model"
+	"github.com/jstermask/go-dynatrace-client/extension"
+	"github.com/jstermask/go-dynatrace-client/model"
 )
 
 const ConfigurationApiPath string = "/api/config/v1"
