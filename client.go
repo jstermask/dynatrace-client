@@ -1,7 +1,6 @@
 package dynatrace_client
 
 import (
-	"archive/zip"
 	"bytes"
 	"encoding/json"
 	"errors"
@@ -11,8 +10,10 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 	"time"
+
+	"github.com/jstermask/dynatrace-client/extension"
+	"github.com/jstermask/dynatrace-client/model"
 )
 
 const ConfigurationApiPath string = "/api/config/v1"
@@ -64,48 +65,17 @@ func NewClient(envUrl *string, apiToken *string) (*DynatraceClient, error) {
 	return &client, nil
 }
 
-func (c *DynatraceClient) CreateExtension(request *DynatraceExtensionRequest) (*DynatraceExtensionResponse, error) {
-	var metadata DynatraceExtensionMetadata
-	err := json.Unmarshal([]byte(request.Payload), &metadata)
-	if err != nil {
+func (c *DynatraceClient) CreateExtension(request *model.DynatraceExtensionRequest) (*model.DynatraceExtensionResponse, error) {
+	zipFilePath, err := extension.CreatePackagedExtension(request.Payload) 
+	if(err != nil) {
 		return nil, err
 	}
 
-	// create a zip file containing a plugin.json file with payload content
-	zipDir, err := os.MkdirTemp(os.TempDir(), "dynatrace_extension")
-
-	zipFilePath := fmt.Sprintf("%s/%s.zip", zipDir, metadata.Name)
-
-	zipFile, err := os.Create(zipFilePath)
-	if err != nil {
-		return nil, err
-	}
-	zipWriter := zip.NewWriter(zipFile)
-
-	entry, err := zipWriter.Create("plugin.json")
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = io.Copy(entry, strings.NewReader(request.Payload))
-	if err != nil {
-		return nil, err
-	}
-
-	err = zipWriter.Close()
-	if err != nil {
-		return nil, err
-	}
-	zipFile.Close()
-	if err != nil {
-		return nil, err
-	}
-
-	file, _ := os.Open(zipFilePath)
+	file, _ := os.Open(*zipFilePath)
 	defer file.Close()
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, _ := writer.CreateFormFile("file", path.Base(zipFilePath))
+	part, _ := writer.CreateFormFile("file", path.Base(*zipFilePath))
 	io.Copy(part, file)
 	writer.Close()
 
@@ -125,7 +95,7 @@ func (c *DynatraceClient) CreateExtension(request *DynatraceExtensionRequest) (*
 		return nil, err
 	}
 
-	var dynaResp DynatraceExtensionResponse
+	var dynaResp model.DynatraceExtensionResponse
 	err = json.Unmarshal(bodyBytes, &dynaResp)
 	if err != nil {
 		return nil, err

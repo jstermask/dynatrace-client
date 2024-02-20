@@ -1,4 +1,4 @@
-package dynatrace_client
+package model
 
 
 type DynatraceExtensionRequest struct {
