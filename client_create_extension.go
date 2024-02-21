@@ -28,7 +28,7 @@ func (c *DynatraceClient) CreateExtension(request *DynatraceExtensionCreateReque
 	if err != nil {
 		return nil, err
 	}
-	//defer packagedExtension.Dispose()
+	defer packagedExtension.Dispose()
 
 	file, _ := os.Open(packagedExtension.FilePath)
 	defer file.Close()

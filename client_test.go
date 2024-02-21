@@ -12,7 +12,6 @@ const ExtensionTestDataFile = "testdata/custom.my.test.ext.json"
 
 type DynatraceExtensionTest struct {
 	Name string `json:"name"`
-	Description string `json:"description"`
 	Version string `json:"version"`
 }
 

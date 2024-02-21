@@ -27,7 +27,7 @@ func TestCreatePackagedExtension(t *testing.T) {
 		t.Fatalf("fail %v", err)
 	}
 
-	//defer packagedExtension.Dispose()
+	defer packagedExtension.Dispose()
 
 	reader, err := zip.OpenReader(packagedExtension.FilePath)
 	if(err != nil) {

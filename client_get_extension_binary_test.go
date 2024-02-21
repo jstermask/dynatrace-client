@@ -79,6 +79,6 @@ func getExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 		var values DynatraceExtensionTest
 		json.Unmarshal([]byte(resp.Payload), &values)
 		assert.Equal(t, "custom.my.test.ext", values.Name, "Wrong name")
-		assert.Equal(t, "my extension", values.Description, "Wrong name")
+		assert.Equal(t, "1.0", values.Version, "Wrong version")
 	}
 }
