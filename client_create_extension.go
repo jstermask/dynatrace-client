@@ -56,7 +56,7 @@ func (c *DynatraceClient) CreateExtension(request *DynatraceExtensionCreateReque
 	}
 
 	if response.StatusCode != 201 {
-		return nil, fmt.Errorf("unable to create extension %s. Status code : %d, Message : %s", path.Base(packagedExtension.FilePath), response.StatusCode, string(bodyBytes))
+		return nil, fmt.Errorf("unable to create extension %s. Status code : %d, Message : %s. Payload %s", path.Base(packagedExtension.FilePath), response.StatusCode, string(bodyBytes), request.Payload)
 	}
 
 	var dynaResp DynatraceExtensionCreateResponse
