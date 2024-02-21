@@ -2,7 +2,6 @@ package model
 
 
 type DynatraceExtensionRequest struct {
-	Name		string 
 	Payload     string
 }
 

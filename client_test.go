@@ -121,7 +121,6 @@ func createExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 	}
 
 	req := model.DynatraceExtensionRequest{
-		Name: "custom.jmx.ipa.test",
 		Payload: `
 		{
 			"name": "custom.jmx.ipa.jvm",
