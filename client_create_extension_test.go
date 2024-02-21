@@ -57,7 +57,7 @@ func createExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 		}
 
 
-		assert.Equal(t, "custom.my.test.ext", values.Name, "name is wrong")
+		assert.Equal(t, "custom.jmx.testext", values.Name, "name is wrong")
 		assert.Equal(t, "1.0", values.Version, "version is wrong")
 
 		response := DynatraceExtensionCreateResponse{

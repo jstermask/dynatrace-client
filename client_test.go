@@ -8,7 +8,7 @@ import (
 	"testing"
 )
 
-const ExtensionTestDataFile = "testdata/custom.my.test.ext.json"
+const ExtensionTestDataFile = "testdata/custom.jmx.testext.json"
 
 type DynatraceExtensionTest struct {
 	Name string `json:"name"`

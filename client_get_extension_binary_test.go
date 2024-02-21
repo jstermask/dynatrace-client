@@ -25,7 +25,7 @@ func getExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		receivedToken := r.Header.Get("Authorization")
 		assert.Equal(t, "Api-Token SomeToken", receivedToken, "wrong token received")
-		assert.Equal(t, "/api/config/v1/extensions/custom.my.test.ext/binary", r.URL.Path, "wrong server path")
+		assert.Equal(t, "/api/config/v1/extensions/custom.jmx.testext/binary", r.URL.Path, "wrong server path")
 		assert.Equal(t, "GET", r.Method)
 
 		testfile,_ := os.Open(ExtensionTestDataFile)
@@ -66,7 +66,7 @@ func getExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 	}
 
 	req := DynatraceExtensionGetBinaryRequest{
-		Id: "custom.my.test.ext",
+		Id: "custom.jmx.testext",
 	}
 	
 	resp, err := client.GetExtensionBinary(&req)
@@ -75,10 +75,10 @@ func getExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 	}
 
 	if !shouldFail {
-		assert.Equal(t, "custom.my.test.ext", resp.Id, "Wrong id")
+		assert.Equal(t, "custom.jmx.testext", resp.Id, "Wrong id")
 		var values DynatraceExtensionTest
 		json.Unmarshal([]byte(resp.Payload), &values)
-		assert.Equal(t, "custom.my.test.ext", values.Name, "Wrong name")
+		assert.Equal(t, "custom.jmx.testext", values.Name, "Wrong name")
 		assert.Equal(t, "1.0", values.Version, "Wrong version")
 	}
 }

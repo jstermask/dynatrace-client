@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const ExtensionTestDataFile = "../testdata/custom.my.test.ext.json"
+const ExtensionTestDataFile = "../testdata/custom.jmx.testext.json"
 
 type DynatraceExtensionTest struct {
 	Name string `json:"name"`
@@ -51,7 +51,7 @@ func TestCreatePackagedExtension(t *testing.T) {
 		t.Fatalf("Fail %v", err)
 	}
 
-	assert.Equal(t, "custom.my.test.ext", result.Name, "name mismatch")
+	assert.Equal(t, "custom.jmx.testext", result.Name, "name mismatch")
 	assert.Equal(t, "1.0", result.Version, "version mismatch")
 
 
