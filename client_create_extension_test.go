@@ -3,12 +3,16 @@ package dynatrace_client
 import (
 	"archive/zip"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
+
+
 
 func TestCreateExtensionSuccess(t *testing.T) {
 	createExtensionWitResponseCode(t, false)
@@ -45,15 +49,16 @@ func createExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 			t.Fatalf("Fail %v", err)
 		}
 
-		var values map[string]string
+		var values DynatraceExtensionTest
 
 		err = json.Unmarshal(jsonFileBytes, &values)
 		if err != nil {
 			t.Fatalf("Fail %v", err)
 		}
 
-		assert.Equal(t, "custom.jmx.test.jvm", values["name"], "name is wrong")
-		assert.Equal(t, "my extension", values["description"], "description is wrong")
+
+		assert.Equal(t, "custom.my.test.ext", values.Name, "name is wrong")
+		assert.Equal(t, "my extension", values.Description, "description is wrong")
 
 		response := DynatraceExtensionCreateResponse{
 			Id:          "SomeId",
@@ -81,13 +86,11 @@ func createExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 		Client:   &http.Client{},
 	}
 
+	file, _ := os.Open(ExtensionTestDataFile)
+	payload, _ := io.ReadAll(file)
+
 	req := DynatraceExtensionCreateRequest{
-		Payload: `
-		{
-			"name": "custom.jmx.test.jvm",
-			"description": "my extension"
-		}
-		`,
+		Payload: string(payload),
 	}
 
 	resp, err := client.CreateExtension(&req)

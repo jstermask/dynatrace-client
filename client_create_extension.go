@@ -28,7 +28,7 @@ func (c *DynatraceClient) CreateExtension(request *DynatraceExtensionCreateReque
 	if err != nil {
 		return nil, err
 	}
-	defer packagedExtension.Dispose()
+	//defer packagedExtension.Dispose()
 
 	file, _ := os.Open(packagedExtension.FilePath)
 	defer file.Close()
@@ -56,7 +56,7 @@ func (c *DynatraceClient) CreateExtension(request *DynatraceExtensionCreateReque
 	}
 
 	if response.StatusCode != 201 {
-		return nil, fmt.Errorf("unable to create extension %s. Status code : %d, Message : %s. Payload %s", path.Base(packagedExtension.FilePath), response.StatusCode, string(bodyBytes), request.Payload)
+		return nil, fmt.Errorf("unable to create extension from zip : %s. Status code : %d. Message : %s. Payload %s", path.Base(packagedExtension.FilePath), response.StatusCode, string(bodyBytes), request.Payload)
 	}
 
 	var dynaResp DynatraceExtensionCreateResponse

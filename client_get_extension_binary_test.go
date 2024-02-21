@@ -11,6 +11,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+
+
 func TestGetExtensionBinarySuccess(t *testing.T) {
 	getExtensionWitResponseCode(t, false)
 }
@@ -23,15 +25,13 @@ func getExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		receivedToken := r.Header.Get("Authorization")
 		assert.Equal(t, "Api-Token SomeToken", receivedToken, "wrong token received")
-		assert.Equal(t, "/api/config/v1/extensions/custom.jmx.test.jvm/binary", r.URL.Path, "wrong server path")
+		assert.Equal(t, "/api/config/v1/extensions/custom.my.test.ext/binary", r.URL.Path, "wrong server path")
 		assert.Equal(t, "GET", r.Method)
 
-		packagedExtension, err := extension.CreatePackagedExtension(`
-		{
-			"name": "custom.jmx.test.jvm",
-			"description" : "my extension"
-		}
-		`)
+		testfile,_ := os.Open(ExtensionTestDataFile)
+		payload,_ := io.ReadAll(testfile)
+
+		packagedExtension, err := extension.CreatePackagedExtension(string(payload))
 		if err != nil {
 			t.Fatalf("Fail %v", err)
 		}
@@ -66,7 +66,7 @@ func getExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 	}
 
 	req := DynatraceExtensionGetBinaryRequest{
-		Id: "custom.jmx.test.jvm",
+		Id: "custom.my.test.ext",
 	}
 	
 	resp, err := client.GetExtensionBinary(&req)
@@ -75,10 +75,10 @@ func getExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 	}
 
 	if !shouldFail {
-		assert.Equal(t, "custom.jmx.test.jvm", resp.Id, "Wrong id")
-		var values map[string]string
+		assert.Equal(t, "custom.my.test.ext", resp.Id, "Wrong id")
+		var values DynatraceExtensionTest
 		json.Unmarshal([]byte(resp.Payload), &values)
-		assert.Equal(t, "custom.jmx.test.jvm", values["name"], "Wrong name")
-		assert.Equal(t, "my extension", values["description"], "Wrong name")
+		assert.Equal(t, "custom.my.test.ext", values.Name, "Wrong name")
+		assert.Equal(t, "my extension", values.Description, "Wrong name")
 	}
 }

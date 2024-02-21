@@ -9,8 +9,6 @@ import (
 	"os"
 	"path"
 	"strings"
-
-	"github.com/jstermask/dynatrace_client/model"
 )
 
 const FolderPattern string = "dynatrace_extension"
@@ -22,6 +20,10 @@ type PackagedExtension struct {
 
 type ExtensionPayload struct {
 	Payload string
+}
+
+type DynatraceExtensionMetadata struct {
+	Name string `json:"name"`
 }
 
 func GetExtensionPayloadFromPackage(zipPackage []byte) (*ExtensionPayload, error) {
@@ -46,7 +48,7 @@ func GetExtensionPayloadFromPackage(zipPackage []byte) (*ExtensionPayload, error
 }
 
 func CreatePackagedExtension(payload string) (*PackagedExtension, error) {
-	var metadata model.DynatraceExtensionMetadata
+	var metadata DynatraceExtensionMetadata
 	err := json.Unmarshal([]byte(payload), &metadata)
 	if err != nil {
 		return nil, err

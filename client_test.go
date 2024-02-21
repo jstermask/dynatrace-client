@@ -8,6 +8,14 @@ import (
 	"testing"
 )
 
+const ExtensionTestDataFile = "testdata/custom.my.test.ext.json"
+
+type DynatraceExtensionTest struct {
+	Name string `json:"name"`
+	Description string `json:"description"`
+	Version string `json:"version"`
+}
+
 func TestNewClient(t *testing.T) {
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		receivedToken := r.Header.Get("Authorization")
@@ -44,3 +52,5 @@ func TestNewClient(t *testing.T) {
 	}
 
 }
+
+

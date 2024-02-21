@@ -1,0 +1,35 @@
+{
+    "version": "1.0",
+    "name": "custom.my.test.ext",
+    "description": "my extension",
+    "type": "JMX",
+    "entity": "PROCESS_GROUP_INSTANCE",
+    "metricGroup": "my.test",
+    "configUI": {
+      "displayName": "Custom JMX Monitoring"
+    },
+    "metrics": [
+      {
+        "timeseries": {
+          "key": "os.process_cpu_load",
+          "unit": "Percent",
+          "displayname": "Process CPU usage (%)",
+          "dimensions": [
+            "rx_pid"
+          ]
+        },
+        "source": {
+          "domain": "java.lang",
+          "keyProperties": {
+            "type": "OperatingSystem"
+          },
+          "allowAdditionalKeys": true,
+          "attribute": "ProcessCpuLoad",
+          "aggregation": "avg"
+        }
+      }
+    ],
+    "ui": {
+      "charts": []
+    }
+  }
