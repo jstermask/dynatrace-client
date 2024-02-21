@@ -1,7 +1,9 @@
 package dynatrace_client
 
 import (
+	"archive/zip"
 	"encoding/json"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -53,6 +55,37 @@ func TestCreateExtension(t *testing.T) {
 		assert.Equal(t, "Api-Token SomeToken", receivedToken, "wrong token received")
 		assert.Equal(t, "/api/config/v1/extensions", r.URL.Path, "wrong server path")
 		assert.Equal(t, "POST", r.Method)
+
+		file, headers, err := r.FormFile("file")
+		if err != nil {
+			t.Fatalf("Fail %v", err)
+		} 
+
+		zipReader, err := zip.NewReader(file, headers.Size)
+		if err != nil {
+			t.Fatalf("Fail %v", err)
+		}
+
+		jsonFile, err := zipReader.Open("plugin.json")
+		if err != nil {
+			t.Fatalf("Fail %v", err)
+		}
+
+		jsonFileBytes, err := io.ReadAll(jsonFile)
+		if err != nil {
+			t.Fatalf("Fail %v", err)
+		}
+
+		var values map[string]string
+
+		err = json.Unmarshal(jsonFileBytes, &values)
+		if err != nil {
+			t.Fatalf("Fail %v", err)
+		}
+
+		assert.Equal(t, "custom.jmx.ipa.jvm", values["name"], "name is wrong")
+		assert.Equal(t, "my extension", values["description"], "description is wrong")
+
 
 		response := model.DynatraceExtensionResponse{
 			Id: "SomeId",
