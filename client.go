@@ -66,16 +66,17 @@ func NewClient(envUrl *string, apiToken *string) (*DynatraceClient, error) {
 }
 
 func (c *DynatraceClient) CreateExtension(request *model.DynatraceExtensionRequest) (*model.DynatraceExtensionResponse, error) {
-	zipFilePath, err := extension.CreatePackagedExtension(request.Payload) 
+	packagedExtension, err := extension.CreatePackagedExtension(request.Payload) 
 	if(err != nil) {
 		return nil, err
 	}
+	defer packagedExtension.Dispose()
 
-	file, _ := os.Open(*zipFilePath)
+	file, _ := os.Open(packagedExtension.FilePath)
 	defer file.Close()
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, _ := writer.CreateFormFile("file", path.Base(*zipFilePath))
+	part, _ := writer.CreateFormFile("file", path.Base(packagedExtension.FilePath))
 	io.Copy(part, file)
 	writer.Close()
 

@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path"
 	"strings"
+
 	"github.com/jstermask/dynatrace_client/model"
 )
 
@@ -14,7 +16,11 @@ const FolderPattern string = "dynatrace_extension"
 const InnerFileName string = "plugin.json"
 
 
-func CreatePackagedExtension(payload string) (*string, error) {
+type PackagedExtension struct {
+	FilePath string
+}
+
+func CreatePackagedExtension(payload string) (*PackagedExtension, error) {
 	var metadata model.DynatraceExtensionMetadata
 	err := json.Unmarshal([]byte(payload), &metadata)
 	if err != nil {
@@ -46,6 +52,12 @@ func CreatePackagedExtension(payload string) (*string, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &zipFilePath, nil
-
+	return &PackagedExtension{FilePath: zipFilePath}, nil
 }
+
+func (p *PackagedExtension) Dispose() {
+	parentDirectory := path.Dir(p.FilePath)
+	os.RemoveAll(parentDirectory)
+}
+
+
