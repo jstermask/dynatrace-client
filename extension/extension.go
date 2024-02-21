@@ -2,6 +2,7 @@ package extension
 
 import (
 	"archive/zip"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -15,9 +16,33 @@ import (
 const FolderPattern string = "dynatrace_extension"
 const InnerFileName string = "plugin.json"
 
-
 type PackagedExtension struct {
 	FilePath string
+}
+
+type ExtensionPayload struct {
+	Payload string
+}
+
+func GetExtensionPayloadFromPackage(zipPackage []byte) (*ExtensionPayload, error) {
+	reader, err := zip.NewReader(bytes.NewReader(zipPackage), int64(len(zipPackage)))
+	if err != nil {
+		return nil, err
+	}
+
+	pluginFile, err := reader.Open("plugin.json")
+	if err != nil {
+		return nil, err
+	}
+
+	pluginContentBytes, err := io.ReadAll(pluginFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ExtensionPayload{
+		Payload: string(pluginContentBytes),
+	}, nil
 }
 
 func CreatePackagedExtension(payload string) (*PackagedExtension, error) {
@@ -59,5 +84,3 @@ func (p *PackagedExtension) Dispose() {
 	parentDirectory := path.Dir(p.FilePath)
 	os.RemoveAll(parentDirectory)
 }
-
-

@@ -1,23 +1,30 @@
 package model
 
-
-type DynatraceExtensionRequest struct {
-	Payload     string
+type DynatraceExtensionCreateRequest struct {
+	Payload string
 }
 
-type DynatraceExtensionResponse struct {
+type DynatraceExtensionGetBinaryRequest struct {
 	Id string
-	Name string
+}
+
+type DynatraceExtensionGetBinaryResponse struct {
+	Id string
+	Payload string
+}
+
+type DynatraceExtensionCreateResponse struct {
+	Id          string
+	Name        string
 	Description string
-	Error *DynatraceError
+	Error       *DynatraceError
 }
 
 type DynatraceError struct {
-	Code string
+	Code    string
 	Message string
 }
 
 type DynatraceExtensionMetadata struct {
 	Name string `json:"name"`
 }
-

@@ -11,7 +11,7 @@ import (
 
 func TestCreatePackagedExtension(t *testing.T) {
 	packagedExtension, err := CreatePackagedExtension(`{ 
-		"name" : "custom.jmx.ipa.jvm",
+		"name" : "custom.jmx.test.jvm",
 		"version": "1.0.0"
 	}
 	`)
@@ -43,7 +43,7 @@ func TestCreatePackagedExtension(t *testing.T) {
 		t.Fatalf("Fail %v", err)
 	}
 
-	assert.Equal(t, "custom.jmx.ipa.jvm", result["name"], "name mismatch")
+	assert.Equal(t, "custom.jmx.test.jvm", result["name"], "name mismatch")
 	assert.Equal(t, "1.0.0", result["version"], "version mismatch")
 
 
