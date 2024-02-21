@@ -49,7 +49,15 @@ func TestNewClient(t *testing.T) {
 
 }
 
-func TestCreateExtension(t *testing.T) {
+func TestCreateExtensionSuccess(t *testing.T) {
+	createExtensionWitResponseCode(t, false)
+}
+
+func TestCreateExtensionFails(t *testing.T) {
+	createExtensionWitResponseCode(t, true)
+}
+
+func createExtensionWitResponseCode(t *testing.T, shouldFail bool) {
 	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		receivedToken := r.Header.Get("Authorization")
 		assert.Equal(t, "Api-Token SomeToken", receivedToken, "wrong token received")
@@ -59,7 +67,7 @@ func TestCreateExtension(t *testing.T) {
 		file, headers, err := r.FormFile("file")
 		if err != nil {
 			t.Fatalf("Fail %v", err)
-		} 
+		}
 
 		zipReader, err := zip.NewReader(file, headers.Size)
 		if err != nil {
@@ -86,16 +94,18 @@ func TestCreateExtension(t *testing.T) {
 		assert.Equal(t, "custom.jmx.ipa.jvm", values["name"], "name is wrong")
 		assert.Equal(t, "my extension", values["description"], "description is wrong")
 
-
 		response := model.DynatraceExtensionResponse{
-			Id: "SomeId",
-			Name: "SomeName",
+			Id:          "SomeId",
+			Name:        "SomeName",
 			Description: "SomeDescription",
 		}
 
 		respBytes, err := json.Marshal(response)
 		if err != nil {
 			t.Fatalf("Fail %v", err)
+		}
+		if !shouldFail {
+			w.WriteHeader(201)
 		}
 		w.Write(respBytes)
 
@@ -106,10 +116,10 @@ func TestCreateExtension(t *testing.T) {
 
 	client := DynatraceClient{
 		ApiToken: token,
-		EnvUrl: svr.URL,
-		Client: &http.Client{},
+		EnvUrl:   svr.URL,
+		Client:   &http.Client{},
 	}
-	
+
 	req := model.DynatraceExtensionRequest{
 		Name: "custom.jmx.ipa.test",
 		Payload: `
@@ -121,11 +131,13 @@ func TestCreateExtension(t *testing.T) {
 	}
 
 	resp, err := client.CreateExtension(&req)
-	if(err != nil) {
+	if err != nil && !shouldFail {
 		t.Fatalf("Fail %v", err)
 	}
-	assert.Equal(t, "SomeId", resp.Id, "Wrong id")
-	assert.Equal(t, "SomeName", resp.Name, "Wrong name ")
-	assert.Equal(t, "SomeDescription", resp.Description, "Wrong description")
-	
+
+	if(!shouldFail) {
+		assert.Equal(t, "SomeId", resp.Id, "Wrong id")
+		assert.Equal(t, "SomeName", resp.Name, "Wrong name ")
+		assert.Equal(t, "SomeDescription", resp.Description, "Wrong description")
+	}
 }

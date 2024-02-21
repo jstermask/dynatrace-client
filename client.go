@@ -92,6 +92,10 @@ func (c *DynatraceClient) CreateExtension(request *model.DynatraceExtensionReque
 		return nil, err
 	}
 
+	if response.StatusCode != 201 {
+		return nil, fmt.Errorf("unable to create extension %s. Status code : %d", request.Name, response.StatusCode)
+	}
+
 	bodyBytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
