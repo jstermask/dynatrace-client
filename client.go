@@ -81,6 +81,7 @@ func (c *DynatraceClient) CreateExtension(request *model.DynatraceExtensionReque
 	writer.Close()
 
 	req, err := http.NewRequest("POST", c.getConfigurationApiRequest("/extensions"), body)
+	c.addRequestHeaders(req)
 	if err != nil {
 		return nil, err
 	}
